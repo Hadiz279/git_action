@@ -1,0 +1,12 @@
+# Ignore Docker artifacts
+*.log
+*.pid
+*.sock
+
+# Ignore Python cache if ever added
+__pycache__/
+*.pyc
+
+# Ignore environment files
+.env
+

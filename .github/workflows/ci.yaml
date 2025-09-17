@@ -1,0 +1,53 @@
+---
+
+name: git_actions CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_requests:
+
+jobs:
+  build-test-lint-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Docker image
+        run: docker build -t git_actions_ci:latest .
+
+      - name: Lint Dockerfile With Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./Dockerfile 
+
+      - name: Run CI tests
+        run: ./tests/test_ci.sh
+
+      - name: Tear down Compose services
+        if: always()
+        run: docker compose -f compose.yaml down
+
+      - name: Validate docker-compose config
+        run: docker compose -f compose.yaml config
+
+      - name: Log In To Dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build And Push To Dockerhub
+        uses: docker/build-push-action@v5
+        with:
+          contenxt: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/git_actions_ci:latest
+
+
+
