@@ -17,14 +17,14 @@ jobs:
 
       - name: Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Build Docker image
         run: docker build -t git_actions_ci:latest .
 
       - name: Lint Dockerfile With Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ./Dockerfile 
+          dockerfile: ./Dockerfile
 
       - name: Run CI tests
         run: ./tests/test_ci.sh
