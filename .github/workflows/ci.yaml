@@ -5,7 +5,7 @@ name: git_actions CI Pipeline
 on:
   push:
     branches: [ "main" ]
-  pull_requests:
+  pull_request:
 
 jobs:
   build-test-lint-push:
